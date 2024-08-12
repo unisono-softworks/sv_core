@@ -35,6 +35,7 @@
 				return array();
 			}
 
+			// @todo use array as only valid type, don't cast mixed data types (deprecated in 8.2)
 			$properties				= array();
 			$font_family			= false;
 			$font_weight			= false;
@@ -49,6 +50,12 @@
 			}
 
 			if($this->get_parent()->get_data()) {
+
+				// workaround
+				$font_family			= array();
+				$font_weight			= array();
+				$font_italic			= array();
+
 				foreach ($this->get_parent()->get_data() as $breakpoint => $val) {
 					if ($val) {
 						$f = $this->get_parent()->get_parent()->get_module('sv_webfontloader')->get_font_by_label($val);
