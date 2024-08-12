@@ -1,7 +1,8 @@
 <?php
 
 namespace sv_core;
-#[\AllowDynamicProperties]
+use AllowDynamicProperties;
+#[AllowDynamicProperties]
 class settings extends sv_abstract{
 	// properties
 	private $parent					= false;
