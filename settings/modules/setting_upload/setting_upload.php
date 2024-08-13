@@ -36,11 +36,12 @@
 					}
 				}
 			}
-			
+
 			return $data_new;
 		}
 		private function delete_group_files(array $input): array{
-			$data = $_POST[$this->get_parent()->get_parent()->get_prefix( $this->get_parent()->get_parent()->get_ID() )];
+			$key = $this->get_parent()->get_parent()->get_prefix( $this->get_parent()->get_parent()->get_ID() );
+			$data = isset($_POST[$key]) ? $_POST[$key] : array();
 			if(is_array($data)) {
 				foreach ($data as $group => $fields) {
 					$group = sanitize_key($group);
@@ -170,7 +171,7 @@
 		private function handle_file_upload(array $file){
 			// remove old attachment
 			wp_delete_attachment( $this->get_data(), true );
-			
+
 			$input				= wp_insert_attachment(array(
 				'guid'		   => wp_upload_dir()['url'] . '/' . basename( $file['file'] ),
 				'post_mime_type' => $file['type'],
