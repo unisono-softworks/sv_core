@@ -13,7 +13,7 @@ class setting_margin extends settings{
 		$properties				= array();
 
 		if($this->get_parent()->get_data()) {
-			$imploded		= false;
+			$imploded		= [];
 			foreach($this->get_parent()->get_data() as $breakpoint => $val) {
 				$top = (isset($val['top']) && strlen($val['top']) > 0) ? $val['top'] : false;
 				$right = (isset($val['right']) && strlen($val['right']) > 0) ? $val['right'] : false;
@@ -24,7 +24,7 @@ class setting_margin extends settings{
 					$imploded[$breakpoint] = $top . ' ' . $right . ' ' . $bottom . ' ' . $left;
 				}
 			}
-			if($imploded) {
+			if(empty($imploded)) {
 				$properties[$property] = $this->prepare_css_property_responsive($imploded, $prefix, $suffix); // unnecessary , returns the same as line 56?
 			}
 		}
