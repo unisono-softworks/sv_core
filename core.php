@@ -146,7 +146,7 @@ if ( !class_exists( '\sv_core\core' ) ) {
 			}
 
 			if($output){
-				$this->send_response('success', '', base64_encode(utf8_decode($output))); // magic
+				$this->send_response('success', '', base64_encode(mb_convert_encoding($output, 'ISO-8859-1', 'UTF-8'))); // magic
 			}else{
 				$this->send_response('error', 'Section not found!');
 			}
