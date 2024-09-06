@@ -1000,18 +1000,30 @@ class scripts extends sv_abstract {
 		return $this->inline;
 	}
 
+	// supports multiple block names now, using "," string instead of array|string for PHP 7.x
 	public function set_block_style( string $label, string $block_name = '' ): scripts {
-		if ( strlen( $this->get_parent()->get_block_name() ) === 0 && strlen( $block_name ) === 0 ) {
-			return $this;
+		// fallback
+		$block_name = empty($block_name) ? $this->get_parent()->get_block_name() : $block_name;
+		if(empty($block_name)) return $this; // exit
+
+		// single block name
+		$block_names = [$block_name];
+
+		// list of block names
+		if(strpos($block_name, ',') !== false){
+			$block_name = str_replace(' ', '', $block_name);
+			$block_names = explode(',', $block_name);
 		}
 
-		register_block_style(
-			(strlen($block_name) > 0) ? $block_name : $this->get_parent()->get_block_name(),
-			array(
-				'name'         => $this->get_ID(),
-				'label'        => $label,
-			)
-		);
+		foreach($block_names as $key => $block_name){
+			register_block_style(
+				$block_name,
+				array(
+					'name'         => $this->get_ID(),
+					'label'        => $label,
+				)
+			);
+		}
 
 		// @todo: deprecated in PHP 8
 		@$this->is_block_style							= $label;
