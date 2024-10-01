@@ -527,7 +527,7 @@ class scripts extends sv_abstract {
 		// -----------------------------------------------------
 		
 		// check if inline per settings (higher prio) or per parameter (lower prio)
-		if ( static::$list[ $script->get_UID() ]['attached'] && // checks if null - Dennis
+		if ( isset(static::$list[ $script->get_UID() ]) && static::$list[ $script->get_UID() ]['attached'] && // checks if null - Dennis
 		     (
 			     static::$list[ $script->get_UID() ]['attached']->get_data() === 'inline'
 			     || (
