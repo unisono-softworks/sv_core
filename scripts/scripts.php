@@ -184,11 +184,18 @@ class scripts extends sv_abstract {
 			if ($this->get_is_expert_mode()) {
 				$this->get_root()->add_section($this);
 			}
+
 			$this->s['flush_css_cache'] = $this->get_parent()::$settings->create($this)
 				->set_ID('flush_css_cache')
 				->set_title(__('Flush cache for all CSS files', 'sv_core'))
 				->set_description(__('All cached CSS Files will be regenerated', 'sv_core'))
 				->load_type('checkbox');
+
+			$this->s['disable_css_cache'] = $this->get_parent()::$settings->create($this)
+                ->set_ID('disable_css_cache')
+                ->set_title(__('Disable CSS caching', 'sv_core'))
+                ->set_description(__('Useful if you are working on css in a child theme. This will increase load times!', 'sv_core'))
+                ->load_type('checkbox');
 
 			$this->s['disable_all_css'] = $this->get_parent()::$settings->create($this)
 				->set_ID('disable_all_css')
@@ -264,7 +271,7 @@ class scripts extends sv_abstract {
 					->load_type( 'select' );
 
 				// invalidate cache globally if requested
-				if(intval($this->s[ 'flush_css_cache' ]->get_data()) === 1){
+				if(intval($this->s[ 'flush_css_cache' ]->get_data()) === 1 || intval($this->s[ 'disable_css_cache' ]->get_data()) === 1){
 					$script->set_css_cache_invalidated(true,true);
 				}
 
