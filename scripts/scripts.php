@@ -68,7 +68,7 @@ class scripts extends sv_abstract {
 
 			add_action( 'template_redirect', array( $this, 'start' ), 1 );
 			add_action( 'template_redirect', array( $this, 'wp_footer' ), 10 );
-			add_action( 'wp_footer', array( $this, 'wp_footer' ), 10 ); // enqueue late registered scripts
+			add_action( 'wp_footer', array( $this, 'wp_footer' ), 99999 ); // enqueue late registered scripts
 			add_action( 'wp_footer', array( $this, 'enqueue_inline_style' ), 10 ); // enqueue late registered scripts
 
 			add_filter('script_loader_tag', function($tag, $handle){
@@ -342,7 +342,7 @@ class scripts extends sv_abstract {
 	}
 	
 	private function replace_type_attributes(){
-		$html = ob_get_contents();
+		$html = ob_get_clean();
 		$html = preg_replace("/<link(.*)sv_core_init_style-css(.*)\/>/", '', $html);
 
 		$html = $this->replace_type_attr($html);
