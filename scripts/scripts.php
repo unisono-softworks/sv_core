@@ -343,7 +343,6 @@ class scripts extends sv_abstract {
 	
 	private function replace_type_attributes(){
 		$html = ob_get_contents();
-		ob_end_clean();
 		$html = preg_replace("/<link(.*)sv_core_init_style-css(.*)\/>/", '', $html);
 
 		$html = $this->replace_type_attr($html);
