@@ -68,7 +68,7 @@ class scripts extends sv_abstract {
 
 			add_action( 'template_redirect', array( $this, 'start' ), 1 );
 			add_action( 'template_redirect', array( $this, 'wp_footer' ), 10 );
-			add_action( 'wp_footer', array( $this, 'wp_footer' ), 99999 ); // enqueue late registered scripts
+			add_action( 'wp_footer', array( $this, 'wp_footer' ) ); // enqueue late registered scripts
 			add_action( 'wp_footer', array( $this, 'enqueue_inline_style' ), 10 ); // enqueue late registered scripts
 
 			add_filter('script_loader_tag', function($tag, $handle){
@@ -320,33 +320,50 @@ class scripts extends sv_abstract {
 	public function enqueue_inline_style() {
 		wp_enqueue_style('sv_core_init_style');
 	}
-	
+
 	public function wp_footer() {
-		// we need to register an attached style to be allowed to add inline styles with WP function
+		// Register the style to allow inline styles with WP functions
 		wp_register_style('sv_core_init_style', $this->get_url_core('frontend/css/style.css'));
 
-		foreach ( $this->get_scripts() as $script ) {
-			if(!$script->get_is_backend() && !$script->get_load_in_header()) {
+		foreach ($this->get_scripts() as $script) {
+			if (!$script->get_is_backend() && !$script->get_load_in_header()) {
 				$this->add_script($script);
 			}
 		}
 
-		// inline styles are printed
-		//wp_enqueue_style('sv_core_init_style');
+		// Check if Imagify is installed and its buffer method is active
+		if (class_exists('Imagify') && function_exists('get_imagify_option') && get_imagify_option( 'display_nextgen' )) {
+			// Use Imagify's buffer for content manipulation
+			add_filter('imagify_buffer', function ($buffer) {
+				// Remove the <link> tag associated with `sv_core_init_style-css`
+				$buffer = preg_replace('/<link[^>]*id="sv_core_init_style-css"[^>]*>/', '', $buffer);
 
-		ob_start();
-		// now remove the attached style
-		add_action('wp_print_footer_scripts', function(){
-			$this->replace_type_attributes();
-		});
+				// Additional modifications
+				$buffer = $this->replace_type_attr($buffer);
+
+				return $buffer;
+			}, PHP_INT_MAX);
+		} else {
+			// Fallback: Use your original output buffering logic
+			ob_start();
+
+			add_action('wp_print_footer_scripts', function () {
+				$this->replace_type_attributes();
+			}, PHP_INT_MAX);
+		}
 	}
-	
-	private function replace_type_attributes(){
-		$html = ob_get_clean();
-		$html = preg_replace("/<link(.*)sv_core_init_style-css(.*)\/>/", '', $html);
 
+	private function replace_type_attributes() {
+		// Get all buffered content
+		$html = ob_get_clean();
+
+		// Remove the <link> tag associated with the registered style
+		$html = preg_replace('/<link[^>]*id="sv_core_init_style-css"[^>]*>/', '', $html);
+
+		// Further modify attributes if needed
 		$html = $this->replace_type_attr($html);
 
+		// Output the modified HTML
 		echo $html;
 	}
 	
