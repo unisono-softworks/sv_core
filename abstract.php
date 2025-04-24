@@ -291,6 +291,8 @@
 			return $output;
 		}
 
+		public function activate_plugin(): void{}
+
 		protected function set_section_types(): sv_abstract {
 			$this->section_types = array(
 				'settings'	=> __( 'Configuration &amp; Settings', 'sv_core' ),
@@ -336,6 +338,12 @@
 				$this->load_translation();
 			}else{
 				add_action('plugins_loaded', array($this, 'load_translation'));
+			}
+
+			if(did_action($this->get_root()->get_name() . '_activate_plugin')){
+				$this->activate_plugin();
+			}else{
+				add_action($this->get_root()->get_name() . '_activate_plugin', array($this, 'activate_plugin'));
 			}
 		}
 
