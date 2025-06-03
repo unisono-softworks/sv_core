@@ -620,6 +620,12 @@ class scripts extends sv_abstract {
 					wp_enqueue_style( $script->get_handle() );
 				}
 			} else {
+                /*
+                 * Detecting blocks / has_block:
+                 * by checking if wordpress has enqueued the styles for the the native block name:
+                 * wp_style_is( $module->get_block_handle(), 'enqueued' )
+                 * Hint: Some blocks pretend to be a specific element but got another class like h1: wp-block-heading / wp-block-post-title
+                 */
 				// frontend: enqueue extra styles if block is loaded
 				add_action( 'wp_footer', function () use ( $module, $script ) {
 					if (
