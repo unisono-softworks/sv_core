@@ -970,6 +970,7 @@ class scripts extends sv_abstract {
 					}
 				}
 				$css = ob_get_clean();
+				$css = $this->minify_css($css);
 
 				file_put_contents($this->get_path_cached($module->get_prefix().'.css'), $css);
 				$this->set_css_cache_invalidated(false);
@@ -984,6 +985,23 @@ class scripts extends sv_abstract {
 		}
 
 		return $this;
+	}
+
+	public function minify_css(string $css): string {
+		// Remove comments
+		$css = preg_replace('!/\*.*?\*/!s', '', $css);
+		$css = preg_replace('/\n\s*\n/', "\n", $css); // remove blank lines
+		// Remove space after colons
+		$css = preg_replace('/:\s+/', ':', $css);
+		// Remove whitespace
+		$css = preg_replace('/\s+/', ' ', $css);
+		// Remove unnecessary spaces
+		$css = str_replace([' {', '{ '], '{', $css);
+		$css = str_replace([' }', '} '], '}', $css);
+		$css = str_replace('; ', ';', $css);
+		$css = str_replace(', ', ',', $css);
+		// Trim
+		return trim($css);
 	}
 	
 	public function get_path(string $suffix = ''): string {
