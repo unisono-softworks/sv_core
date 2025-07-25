@@ -965,7 +965,7 @@ class scripts extends sv_abstract {
 
 				ob_start();
 				foreach($module->get_scripts() as $script){
-					if($script->get_is_enqueued() && file_exists($script->get_path())) {
+					if(file_exists($script->get_path())) {
 						require_once($script->get_path());
 					}
 				}

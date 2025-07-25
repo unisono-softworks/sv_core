@@ -41,7 +41,7 @@
 
 		protected $modules_loaded 			= array();
 
-		protected $module_css_cache			= false; // default false, set true in a module to opt in for CSS Caching
+		protected $module_css_cache			= true; // default false, set true in a module to opt in for CSS Caching
 
 		/**
 		 * @desc			initialize plugin
@@ -395,6 +395,10 @@
 			$prefix = str_replace( $this->get_root()->get_name(), 'sv_common', $this->get_name() );
 
 			return  $prefix . $append;
+		}
+
+		public function load_settings() {
+			return $this;
 		}
 
 		public function get_settings(): array {
