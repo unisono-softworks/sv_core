@@ -549,6 +549,11 @@ class scripts extends sv_abstract {
 		}
 		// -----------------------------------------------------
 		
+		// @todo experimental - moved de-queuer outside of if clause to allow de-queueing when inline
+		// remove default styles from Gutenberg
+		wp_dequeue_style( $script->get_handle() );
+		wp_deregister_style( $script->get_handle() );
+		
 		// check if inline per settings (higher prio) or per parameter (lower prio)
 		if ( isset(static::$list[ $script->get_UID() ]) && static::$list[ $script->get_UID() ]['attached'] && // checks if null - Dennis
 		     (
@@ -563,7 +568,16 @@ class scripts extends sv_abstract {
 		) {
 			if ( is_file( $script->get_path() ) ) {
 				ob_start();
-				require_once( $script->get_path() );
+				/*
+				 * @todo refactor cache creation:
+				 * - create a dedicated cached / mini version of every css file
+				 * - allow the creation of dynamic css cache file combinations?
+				 * -> at the moment, we create a combined cache file which ignores enqueuement
+				 * - use cached files for inline, like we try below:
+				 */
+				is_file( $script->get_path_cached() ) ?
+					require_once( $script->get_path_cached() )
+					: require_once( $script->get_path() ) ;
 				$css = ob_get_clean();
 				
 				wp_add_inline_style( 'sv_core_init_style', $css );
@@ -577,10 +591,6 @@ class scripts extends sv_abstract {
 			if ( $script->get_path() && filesize( $script->get_path() ) === 0 ) {
 				return $this->set_script_active( $script );
 			}
-
-			// remove default styles from Gutenberg
-			wp_dequeue_style( $script->get_handle() );
-			wp_deregister_style( $script->get_handle() );
 			
 			// register style
 			wp_register_style(
@@ -916,8 +926,9 @@ class scripts extends sv_abstract {
 		return $this;
 	}
 	
-	public function get_path_cached(string $file): string{
-		$path		= wp_upload_dir()['basedir'].'/straightvisions/cache/'.$this->get_root()->get_prefix().'/'.$this->get_parent()->get_prefix().'/';
+	public function get_path_cached(string $file = ''): string{
+		$file = empty($file) ? basename($this->script_path) : $file;
+		$path = wp_upload_dir()['basedir'].'/straightvisions/cache/'.$this->get_root()->get_prefix().'/'.$this->get_parent()->get_prefix().'/';
 
 		// create directories of not exist
 		if (!is_dir($path.dirname($file))) {
