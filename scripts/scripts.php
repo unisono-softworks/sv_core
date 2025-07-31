@@ -964,8 +964,8 @@ class scripts extends sv_abstract {
 				$_s = reset($_s);
 
 				ob_start();
-				foreach($module->get_scripts() as $script){
-					if(file_exists($script->get_path())) {
+				foreach($module->get_scripts() as $script) {
+					if($script->get_type() === 'css' && file_exists($script->get_path())) {
 						require_once($script->get_path());
 					}
 				}
