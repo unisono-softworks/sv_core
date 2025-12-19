@@ -331,6 +331,7 @@ class scripts extends sv_abstract {
 			}
 		}
 
+		return; // hotfix buffer issue
 		// Check if Imagify is installed and its buffer method is active
 		if (class_exists('Imagify') && function_exists('get_imagify_option') && get_imagify_option( 'display_nextgen' )) {
 			// Use Imagify's buffer for content manipulation
