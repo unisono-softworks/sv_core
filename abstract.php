@@ -329,7 +329,11 @@
 		 */
 		public function plugins_loaded() {
 			if( $this->is_theme_instance() === false ) {
-				load_plugin_textdomain( $this->get_root()->get_prefix(), false, basename( $this->get_path() ) . '/languages' );
+				$current = $this;
+				add_action('init', function () use ($current) {
+					load_plugin_textdomain( $current->get_root()->get_prefix(), false, basename( $current->get_path() ) . '/languages' );
+				}, 1);
+
 			}
 		}
 
